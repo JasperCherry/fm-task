@@ -6,9 +6,10 @@ const {
     listImages,
     getImage,
 } = require('../services/imageService');
+const { config } = require('../config');
 
 
-const upload = multer({ dest: 'temp_uploads/' });
+const upload = multer({ dest: `${config.tempUploadsFolder}/` });
 
 
 router.post('/', upload.single('image'), async (req, res) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const imagesRouter = require('./routes/images');
 const { setupLogic } = require('./setupLogic');
+const { config } = require('./config');
 
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(cors({
     optionsSuccessStatus: 204 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(config.uploadsFolder));
 app.use('/images', imagesRouter);
 
 

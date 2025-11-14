@@ -2,15 +2,16 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const db = require('../db.js');
+const { config } = require('../config');
 
 
 const processAndStoreImage = async (file, { title, width, height }) => {
-    if (!file) throw new Error('Image file is required');
+    if (!file) throw new Error('image file is required');
 
     const imageWidth = width ? parseInt(width) : null;
     const imageHeight = height ? parseInt(height) : null;
     const outputFilename = `img_${Date.now()}.jpg`;
-    const outputPath = path.join('uploads', outputFilename);
+    const outputPath = path.join(config.uploadsFolder, outputFilename);
 
     let imageProcessor = sharp(file.path);
     if (imageWidth || imageHeight) {
@@ -23,16 +24,16 @@ const processAndStoreImage = async (file, { title, width, height }) => {
     const info = db
         .prepare(
             `
-        INSERT INTO images (title, url, width, height)
-        VALUES (?, ?, ?, ?)
-      `
+            INSERT INTO images (title, url, width, height)
+            VALUES (?, ?, ?, ?)
+            `
         )
-        .run(title || null, `/uploads/${outputFilename}`, imageWidth, imageHeight);
+        .run(title || null, `/${config.uploadsFolder}/${outputFilename}`, imageWidth, imageHeight);
 
     return {
         id: info.lastInsertRowid,
         title,
-        url: `/uploads/${outputFilename}`,
+        url: `/${config.uploadsFolder}/${outputFilename}`,
         width: imageWidth,
         height: imageHeight,
     };

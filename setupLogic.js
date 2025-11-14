@@ -1,11 +1,12 @@
 const fs = require('fs');
 const db = require('./db.js');
+const { config } = require('./config');
 
 
 const setupLogic = () => {
     // ensure folders exist
-    if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
-    if (!fs.existsSync('temp_uploads')) fs.mkdirSync('temp_uploads');
+    if (!fs.existsSync(config.uploadsFolder)) fs.mkdirSync(config.uploadsFolder);
+    if (!fs.existsSync(config.tempUploadsFolder)) fs.mkdirSync(config.tempUploadsFolder);
 
     // prepare sqllite table
     db.prepare(`
