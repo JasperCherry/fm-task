@@ -8,14 +8,22 @@ const { config } = require('../config');
 const processAndStoreImage = async (file, { title, width, height }) => {
     if (!file) throw new Error('image file is required');
 
-    const imageWidth = width ? parseInt(width) : null;
-    const imageHeight = height ? parseInt(height) : null;
     const outputFilename = `img_${Date.now()}.jpg`;
     const outputPath = path.join(config.uploadsFolder, outputFilename);
-
+    let imageWidth = width ? parseInt(width) : null;
+    let imageHeight = height ? parseInt(height) : null;
     let imageProcessor = sharp(file.path);
-    if (imageWidth || imageHeight) {
-        imageProcessor = imageProcessor.resize(imageWidth || null, imageHeight || null);
+    const metadata = await imageProcessor.metadata();
+
+    if (!imageWidth) {
+        imageWidth = metadata.width;
+    }
+    if (!imageHeight) {
+        imageHeight = metadata.height;
+    }
+
+    if (width || height) {
+        imageProcessor = imageProcessor.resize(width ? parseInt(width) : null, height ? parseInt(height) : null);
     }
 
     await imageProcessor.toFile(outputPath);

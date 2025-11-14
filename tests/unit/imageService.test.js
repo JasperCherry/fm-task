@@ -2,13 +2,10 @@ jest.mock('better-sqlite3');
 jest.mock('sharp');
 jest.mock('fs');
 
-
 const fs = require('fs');
 const sharp = require('sharp');
-
-
 const db = require('../../db');
-
+const { config } = require('../../config');
 
 const {
     processAndStoreImage,
@@ -30,11 +27,11 @@ describe('imageService', () => {
 
         it('resizes, saves, deletes temp, inserts DB', async () => {
             const mockFile = { path: '/tmp/test.png' };
-
             const toFileMock = jest.fn().mockResolvedValue(true);
 
             sharp.mockReturnValue({
-                resize: () => ({ toFile: toFileMock }),
+                metadata: jest.fn().mockResolvedValue({ width: 800, height: 600 }),
+                resize: () => { return { toFile: toFileMock }; },
                 toFile: toFileMock
             });
 
@@ -43,47 +40,51 @@ describe('imageService', () => {
             });
 
             const result = await processAndStoreImage(mockFile, {
-                title: 'MyImg',
+                title: 'test-image',
                 width: 200,
                 height: 100
             });
 
             expect(fs.unlinkSync).toHaveBeenCalledWith('/tmp/test.png');
             expect(toFileMock).toHaveBeenCalled();
-
             expect(result.id).toBe(1);
-            expect(result.title).toBe('MyImg');
+            expect(result.title).toBe('test-image');
             expect(result.width).toBe(200);
             expect(result.height).toBe(100);
-            expect(result.url).toContain('/uploads/');
+            expect(result.url).toContain(config.uploadsFolder);
         });
     });
 
     describe('listImages', () => {
         it('returns paginated results', () => {
-            db.prepare.mockReturnValue({
-                all: () => [{ id: 5 }]
-            });
+            const randomId = Math.floor(Math.random() * 1000);
+            const page = Math.floor(Math.random() * 10) + 1;
+            const limit = Math.floor(Math.random() * 10) + 1;
 
-            const res = listImages({ page: 2, limit: 3 });
+            db.prepare.mockReturnValue({
+                all: () => [{ id: randomId }]
+            });
+            const res = listImages({ page, limit });
 
             expect(res).toEqual({
-                page: 2,
-                limit: 3,
-                results: [{ id: 5 }]
+                page,
+                limit,
+                results: [{ id: randomId }]
             });
         });
     });
 
     describe('getImage', () => {
         it('returns single image', () => {
+            const randomId = Math.floor(Math.random() * 1000);
+
             db.prepare.mockReturnValue({
-                get: () => ({ id: 77 })
+                get: () => ({ id: randomId })
             });
+            const res = getImage(randomId);
 
-            const res = getImage(77);
-
-            expect(res).toEqual({ id: 77 });
+            expect(res).toEqual({ id: randomId });
         });
     });
+
 });
