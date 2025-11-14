@@ -7,14 +7,14 @@ const fs = require('fs');
 const sharp = require('sharp');
 
 
-const db = require('../db');
+const db = require('../../db');
 
 
 const {
     processAndStoreImage,
     listImages,
     getImage,
-} = require('../services/imageService');
+} = require('../../services/imageService');
 
 describe('imageService', () => {
     beforeEach(() => {

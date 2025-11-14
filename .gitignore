@@ -57,3 +57,4 @@ todo.txt
 temp_uploads
 uploads
 db.sqlite
+tmp/
