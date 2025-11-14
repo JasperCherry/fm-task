@@ -43,7 +43,7 @@ You must have **Node.js** and **npm** installed on your system.
 
 ### Running the Server
 
-Start the application using the defined `start` script:
+Start the application outside of docker container using the defined `start` script:
 
 ```bash
 npm start
@@ -80,3 +80,18 @@ To automatically fix any fixable style errors (such as indentation, quoting styl
 ```bash
 npm run lint-fix
 ```
+
+### Docker Setup
+
+You can run the Image Management API using Docker with Node.js 24.
+
+#### Using Docker Compose
+
+Build and start the container:
+
+```bash
+docker-compose up --build
+```
+
+Note: Images and the SQLite database are stored inside the container in its own internal storage.
+They will be lost if the container is removed. For persistent storage, consider using Docker volumes.
