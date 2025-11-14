@@ -54,3 +54,6 @@ coverage/
 # Misc
 *.tgz
 todo.txt
+temp_uploads
+uploads
+db.sqlite
