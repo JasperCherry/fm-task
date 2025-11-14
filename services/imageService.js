@@ -1,75 +1,75 @@
-const sharp = require("sharp");
-const path = require("path");
-const fs = require("fs");
+const sharp = require('sharp');
+const path = require('path');
+const fs = require('fs');
 const db = require('../db.js');
 
 
 const processAndStoreImage = async (file, { title, width, height }) => {
-  if (!file) throw new Error("Image file is required");
+    if (!file) throw new Error('Image file is required');
 
-  const imageWidth = width ? parseInt(width) : null;
-  const imageHeight = height ? parseInt(height) : null;
-  const outputFilename = `img_${Date.now()}.jpg`;
-  const outputPath = path.join("uploads", outputFilename);
+    const imageWidth = width ? parseInt(width) : null;
+    const imageHeight = height ? parseInt(height) : null;
+    const outputFilename = `img_${Date.now()}.jpg`;
+    const outputPath = path.join('uploads', outputFilename);
 
-  let imageProcessor = sharp(file.path);
-  if (imageWidth || imageHeight) {
-    imageProcessor = imageProcessor.resize(imageWidth || null, imageHeight || null);
-  }
+    let imageProcessor = sharp(file.path);
+    if (imageWidth || imageHeight) {
+        imageProcessor = imageProcessor.resize(imageWidth || null, imageHeight || null);
+    }
 
-  await imageProcessor.toFile(outputPath);
-  fs.unlinkSync(file.path);
+    await imageProcessor.toFile(outputPath);
+    fs.unlinkSync(file.path);
 
-  const info = db
-    .prepare(
-      `
+    const info = db
+        .prepare(
+            `
         INSERT INTO images (title, url, width, height)
         VALUES (?, ?, ?, ?)
       `
-    )
-    .run(title || null, `/uploads/${outputFilename}`, imageWidth, imageHeight);
+        )
+        .run(title || null, `/uploads/${outputFilename}`, imageWidth, imageHeight);
 
-  return {
-    id: info.lastInsertRowid,
-    title,
-    url: `/uploads/${outputFilename}`,
-    width: imageWidth,
-    height: imageHeight,
-  };
-}
+    return {
+        id: info.lastInsertRowid,
+        title,
+        url: `/uploads/${outputFilename}`,
+        width: imageWidth,
+        height: imageHeight,
+    };
+};
 
 
 const listImages = ({ title, page = 1, limit = 10 }) => {
-  const offset = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-  let query = "SELECT * FROM images WHERE 1=1";
-  const params = [];
+    let query = 'SELECT * FROM images WHERE 1=1';
+    const params = [];
 
-  if (title) {
-    query += " AND title LIKE ?";
-    params.push(`%${title}%`);
-  }
+    if (title) {
+        query += ' AND title LIKE ?';
+        params.push(`%${title}%`);
+    }
 
-  query += " LIMIT ? OFFSET ?";
-  params.push(Number(limit), Number(offset));
+    query += ' LIMIT ? OFFSET ?';
+    params.push(Number(limit), Number(offset));
 
-  const rows = db.prepare(query).all(...params);
+    const rows = db.prepare(query).all(...params);
 
-  return {
-    page: Number(page),
-    limit: Number(limit),
-    results: rows,
-  };
-}
+    return {
+        page: Number(page),
+        limit: Number(limit),
+        results: rows,
+    };
+};
 
 
 const getImage = (id) => {
-  return db.prepare("SELECT * FROM images WHERE id = ?").get(id);
-}
+    return db.prepare('SELECT * FROM images WHERE id = ?').get(id);
+};
 
 
 module.exports = {
-  processAndStoreImage,
-  listImages,
-  getImage,
+    processAndStoreImage,
+    listImages,
+    getImage,
 };

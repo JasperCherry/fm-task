@@ -4,6 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
@@ -25,5 +27,8 @@
     "express": "^5.1.0",
     "multer": "^2.0.2",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1"
   }
 }

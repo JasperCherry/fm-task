@@ -1,40 +1,40 @@
-const express = require("express");
-const multer = require("multer");
+const express = require('express');
+const multer = require('multer');
 const router = express.Router();
 const {
-  processAndStoreImage,
-  listImages,
-  getImage,
-} = require("../services/imageService");
+    processAndStoreImage,
+    listImages,
+    getImage,
+} = require('../services/imageService');
 
 
-const upload = multer({ dest: "temp_uploads/" });
+const upload = multer({ dest: 'temp_uploads/' });
 
 
-router.post("/", upload.single("image"), async (req, res) => {
-  try {
-    const result = await processAndStoreImage(req.file, req.body);
-    res.json(result);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+router.post('/', upload.single('image'), async (req, res) => {
+    try {
+        const result = await processAndStoreImage(req.file, req.body);
+        res.json(result);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
 
 
-router.get("/", (req, res) => {
-  const data = listImages(req.query);
-  res.json(data);
+router.get('/', (req, res) => {
+    const data = listImages(req.query);
+    res.json(data);
 });
 
 
-router.get("/:id", (req, res) => {
-  const image = getImage(req.params.id);
+router.get('/:id', (req, res) => {
+    const image = getImage(req.params.id);
 
-  if (!image) {
-    return res.status(404).json({ error: "image not found" });
-  }
+    if (!image) {
+        return res.status(404).json({ error: 'image not found' });
+    }
 
-  res.json(image);
+    res.json(image);
 });
 
 

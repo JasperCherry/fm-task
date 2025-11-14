@@ -1,11 +1,11 @@
-const fs = require("fs");
+const fs = require('fs');
 const db = require('./db.js');
 
 
 const setupLogic = () => {
     // ensure folders exist
-    if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
-    if (!fs.existsSync("temp_uploads")) fs.mkdirSync("temp_uploads");
+    if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
+    if (!fs.existsSync('temp_uploads')) fs.mkdirSync('temp_uploads');
 
     // prepare sqllite table
     db.prepare(`
@@ -17,9 +17,9 @@ const setupLogic = () => {
         height INTEGER
     )
     `).run();
-}
+};
 
 
 module.exports = {
-  setupLogic,
+    setupLogic,
 };
