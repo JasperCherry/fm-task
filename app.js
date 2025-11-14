@@ -7,7 +7,7 @@ const { config } = require('./config');
 
 const app = express();
 
-app.use(cors());
+app.use(cors(config.corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(config.uploadsFolder));
 app.use('/images', imagesRouter);
